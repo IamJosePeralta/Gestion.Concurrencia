@@ -1,11 +1,18 @@
 using System;
-using Infrastructure.Persistence;
+using Domain.Ports.Repository;
+using Domain.Ports.Services;
+using Domain.Services;
+using Infrastructure.Adapters.Repository;
+using Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 //EF SQL server
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddDbContext<SqlContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddControllers();
-
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
